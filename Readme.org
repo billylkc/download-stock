@@ -1,0 +1,65 @@
+#+STARTUP: showeverything
+
+* Deploy
+gcloud functions deploy download-stock \
+--gen2 \
+--region=asia-east1 \
+--runtime=go120 \
+--source=. \
+--entry-point=DownloadStock \
+--trigger-http \
+--set-secrets='QUANDL_TOKEN=QUANDL_TOKEN:latest' \
+--set-secrets='SLACK_WEBHOOK=SLACK_WEBHOOK:latest' \
+--service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
+--timeout=1800s \
+--memory=256MB \
+--max-instances=1
+
+
+* Curl
+curl -m 70 -X POST https://download-stock-fogu52oorq-de.a.run.app \
+-H "Authorization: bearer $(gcloud auth print-identity-token)" \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Hello World"
+}'
+
+
+* Running
+** Reference
+https://github.com/GoogleCloudPlatform/functions-framework-go#quickstart-hello-world-on-your-local-machine
+
+** Run
+export FUNCTION_TARGET=TestFunc
+go run cmd/main.go
+
+curl localhost:8080
+
+
+* setup
+** service account
+gcloud iam service-accounts create msa-download-stock \
+    --display-name="Managed service account - Download Stock" \
+    --description="Managed service account - Download Stock"
+
+** Create custome role
+*** Reference
+Ref: [[https://stackoverflow.com/questions/59756793/how-do-i-grant-a-specific-permission-to-a-cloud-iam-service-account-using-the-gc][grant a specific permission]]
+Ref: [[https://cloud.google.com/iam/docs/creating-custom-roles][Create custom role]]
+
+*** Commands
+gcloud iam roles create cloud-func-member \
+    --project stock-lib \
+    --title "General role for cloud functions" \
+    --description "General role for cloud functions" \
+    --permissions storage.buckets.get
+
+
+gcloud iam roles create cloud_func_member --project=stock-lib \
+    --file=custom-role.yaml
+
+
+** Grant Custom role
+gcloud projects add-iam-policy-binding stock-lib \
+  --member='serviceAccount:test-proj1@example.domain.com' \
+  --role='projects/example-project-id-1/roles/bucketViewer'
