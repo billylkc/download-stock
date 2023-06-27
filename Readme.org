@@ -17,12 +17,23 @@ gcloud functions deploy download-stock \
 
 
 * Curl
-curl -m 70 -X POST https://download-stock-fogu52oorq-de.a.run.app \
+** old
+curl -m 70 -X POST https://download-stock-fogu52oorq-df.a.run.app \
 -H "Authorization: bearer $(gcloud auth print-identity-token)" \
 -H "Content-Type: application/json" \
 -d '{
   "name": "Hello World"
 }'
+
+
+** new
+curl -m 1810 -X POST https://asia-east2-stock-lib.cloudfunctions.net/download-stock \
+-H "Authorization: bearer $(gcloud auth print-identity-token)" \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Hello World"
+}'
+
 
 
 * Running
@@ -69,6 +80,7 @@ gcloud functions add-iam-policy-binding download-stock \
   --member="billy.lamkc@gmail.com" \
   --role="roles/run.invoker" \
   --region="asia-east2"
+
 
 gcloud functions add-invoker-policy-binding download-stock \
   --region="asia-east2" \
