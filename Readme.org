@@ -3,7 +3,7 @@
 * Deploy
 gcloud functions deploy download-stock \
 --gen2 \
---region=asia-east1 \
+--region=asia-east2 \
 --runtime=go120 \
 --source=. \
 --entry-point=DownloadStock \
@@ -63,3 +63,13 @@ gcloud iam roles create cloud_func_member --project=stock-lib \
 gcloud projects add-iam-policy-binding stock-lib \
   --member='serviceAccount:test-proj1@example.domain.com' \
   --role='projects/example-project-id-1/roles/bucketViewer'
+
+** Grant invoker role
+gcloud functions add-iam-policy-binding download-stock \
+  --member="billy.lamkc@gmail.com" \
+  --role="roles/run.invoker" \
+  --region="asia-east2"
+
+gcloud functions add-invoker-policy-binding download-stock \
+  --region="asia-east2" \
+  --member="user:billy.lamkc@gmail.com"
