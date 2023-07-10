@@ -17,6 +17,22 @@ func init() {
 	functions.HTTP("DownloadStock", DownloadStock)
 }
 
+// Function for testing
+func TestFunc(w http.ResponseWriter, r *http.Request) {
+	codes, err := GetCompanyList()
+
+	if err != nil {
+		fmt.Fprint(w, html.EscapeString(err.Error()))
+	}
+	fmt.Println(len(codes))
+
+	if len(codes) > 10 {
+		codes = codes[0:10]
+	}
+	fmt.Println(PrettyPrint(codes))
+
+}
+
 // DownloadStock
 func DownloadStock(w http.ResponseWriter, r *http.Request) {
 

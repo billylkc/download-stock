@@ -33,6 +33,8 @@ type Company struct {
 	DebtSecuritiesInvestor string
 	POSEligble             bool
 	SpreadTable            int
+	TradingCurrency        string
+	RMBCounter             string
 }
 
 // GetCompanyList gets a list of stocks
@@ -73,8 +75,6 @@ func GetCompanyList() ([]Company, error) {
 		return stocks, err
 	}
 
-	fmt.Println(PrettyPrint(rows))
-
 	for i, r := range rows {
 
 		// parse string to correct type
@@ -82,7 +82,7 @@ func GetCompanyList() ([]Company, error) {
 		boardLot, _ := strconv.Atoi(strings.ReplaceAll(r[4], ",", ""))
 		spreadTable, _ := strconv.Atoi(strings.TrimSpace(r[19]))
 
-		if len(r) == 20 {
+		if len(r) >= 20 {
 			s := Company{
 				StockCode:              stockCode,               // r[0] - "Stock Code"
 				Securities:             r[1],                    // r[1] - "Name of Securities"
@@ -104,6 +104,8 @@ func GetCompanyList() ([]Company, error) {
 				DebtSecuritiesInvestor: r[17],                   // r[17] - "Debt Securities Investor Type"
 				POSEligble:             convertBool(r[18]),      // r[18] - "POS Eligble"
 				SpreadTable:            spreadTable,             // r[19] - "Spread Table
+				TradingCurrency:        r[20],                   // r[20] - "Trading Currency"
+				RMBCounter:             r[21],                   // r[21] - "RMB Counter"
 			}
 
 			// return equity only

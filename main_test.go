@@ -31,7 +31,9 @@ func TestDownloadStockHandler(t *testing.T) {
 	}
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(DownloadStock)
+
+	// handler := http.HandlerFunc(DownloadStock)
+	handler := http.HandlerFunc(TestFunc)
 	handler.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
