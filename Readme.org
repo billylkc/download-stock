@@ -41,7 +41,7 @@ curl -m 1810 -X POST https://asia-east2-stock-lib.cloudfunctions.net/download-st
 https://github.com/GoogleCloudPlatform/functions-framework-go#quickstart-hello-world-on-your-local-machine
 
 ** Run
-export FUNCTION_TARGET=TestFunc
+export FUNCTION_TARGET=DownloadStock
 go run cmd/main.go
 
 curl localhost:8080

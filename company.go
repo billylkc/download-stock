@@ -73,6 +73,8 @@ func GetCompanyList() ([]Company, error) {
 		return stocks, err
 	}
 
+	fmt.Println(PrettyPrint(rows))
+
 	for i, r := range rows {
 
 		// parse string to correct type
