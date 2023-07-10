@@ -50,7 +50,7 @@ https://github.com/GoogleCloudPlatform/functions-framework-go#quickstart-hello-w
 
 ** Run
 export FUNCTION_TARGET=DownloadStock
-go run cmd/main.go
+go runsudo apt-get install google-cloud-sdk-cloud-run-proxy cmd/main.go
 
 curl localhost:8080
 

@@ -58,9 +58,9 @@ func DownloadStock(w http.ResponseWriter, r *http.Request) {
 	// Split stocks into 10 different stages
 	var records []HistoricalPrice // Final result
 	var errCodes []string         // List of codes with no records
-	stage, nsplits := 0, 20
+	stage, nsplits := 0, 200
 
-	for i, code := range codes[0:100] {
+	for i, code := range codes {
 
 		// Print stage after every 200 stocks
 		if i%nsplits == 0 {

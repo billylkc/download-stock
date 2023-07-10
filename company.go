@@ -104,8 +104,8 @@ func GetCompanyList() ([]Company, error) {
 				DebtSecuritiesInvestor: r[17],                   // r[17] - "Debt Securities Investor Type"
 				POSEligble:             convertBool(r[18]),      // r[18] - "POS Eligble"
 				SpreadTable:            spreadTable,             // r[19] - "Spread Table
-				TradingCurrency:        r[20],                   // r[20] - "Trading Currency"
-				RMBCounter:             r[21],                   // r[21] - "RMB Counter"
+				// TradingCurrency:        r[20],                   // r[20] - "Trading Currency"
+				// RMBCounter:             r[21],                   // r[21] - "RMB Counter"
 			}
 
 			// return equity only

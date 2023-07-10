@@ -17,6 +17,8 @@ func PrettyPrint(i interface{}) string {
 func InsertStocks(records []HistoricalPrice) error {
 	ctx := context.Background()
 	client, err := bigquery.NewClient(ctx, "stock-lib")
+	defer client.Close()
+
 	if err != nil {
 		return err
 	}
