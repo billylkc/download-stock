@@ -15,6 +15,14 @@ gcloud functions deploy download-stock \
 --memory=256MB \
 --max-instances=1
 
+* Access
+#+BEGIN_SRC bash
+gcloud functions add-invoker-policy-binding download-stock \
+    --region="asia-east2" \
+    --member="user:billy.lamkc@gmail.com"
+#+END_SRC
+
+
 
 * Curl
 ** old
