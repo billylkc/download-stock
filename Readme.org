@@ -26,6 +26,10 @@ gcloud functions add-invoker-policy-binding download-stock \
 #+END_SRC
 
 
+* Run
+#+BEGIN_SRC bash
+gcloud beta run services proxy download-stock --port=8080
+#+END_SRC
 
 * Curl
 ** old

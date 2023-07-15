@@ -46,26 +46,29 @@ func DownloadStock(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		_ = SendSlack(err.Error())
 		fmt.Fprint(w, html.EscapeString(err.Error()))
+		return
 	}
 
 	_ = SendSlack(fmt.Sprintf("Start: %s", currentTime.Format("2006-01-02 15:04:05")))
-
-	// Create Quandl object
-	logger := logrus.New()
-	logger.Out = io.Writer(os.Stdout)
-	q := NewQuandl(logger, today)
 
 	// Check Sat and Sun
 	weekday := currentTime.Weekday()
 	if (weekday == 0) || (weekday == 6) {
 		err = fmt.Errorf("Error. Weekend.")
 		_ = SendSlack(err.Error())
+		return
 	}
+
+	// Create Quandl object
+	logger := logrus.New()
+	logger.Out = io.Writer(os.Stdout)
+	q := NewQuandl(logger, today)
 
 	// Get list of companies in code
 	codes, err := GetCompanyList()
 	if err != nil {
 		fmt.Fprint(w, html.EscapeString(err.Error()))
+		return
 	}
 	_ = SendSlack(fmt.Sprintf("List of stocks - %d", len(codes)))
 
