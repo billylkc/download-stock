@@ -41,6 +41,12 @@ func DownloadStock(w http.ResponseWriter, r *http.Request) {
 	currentTime := time.Now().In(loc).AddDate(0, 0, -1)
 	today := currentTime.Format("2006-01-02")
 
+	// Check record first
+	err := CheckRecords(today)
+	if err != nil {
+		_ = SendSlack(err.Error())
+	}
+
 	_ = SendSlack(fmt.Sprintf("Start: %s", currentTime.Format("2006-01-02 15:04:05")))
 
 	// Create Quandl object

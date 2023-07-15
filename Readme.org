@@ -1,19 +1,22 @@
 #+STARTUP: showeverything
 
 * Deploy
+#+BEGIN_SRC bash
 gcloud functions deploy download-stock \
---gen2 \
---region=asia-east2 \
---runtime=go120 \
---source=. \
---entry-point=DownloadStock \
---trigger-http \
---set-secrets='QUANDL_TOKEN=QUANDL_TOKEN:latest' \
---set-secrets='SLACK_WEBHOOK=SLACK_WEBHOOK:latest' \
---service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
---timeout=1800s \
---memory=256MB \
---max-instances=1
+  --gen2 \
+  --region=asia-east2 \
+  --runtime=go120 \
+  --source=. \
+  --entry-point=DownloadStock \
+  --trigger-http \
+  --set-secrets='QUANDL_TOKEN=QUANDL_TOKEN:latest' \
+  --set-secrets='SLACK_WEBHOOK=SLACK_WEBHOOK:latest' \
+  --service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
+  --timeout=1800s \
+  --memory=256MB \
+  --max-instances=1
+
+#+END_SRC
 
 * Access
 #+BEGIN_SRC bash
@@ -26,21 +29,27 @@ gcloud functions add-invoker-policy-binding download-stock \
 
 * Curl
 ** old
+#+BEGIN_SRC bash
 curl -m 70 -X POST https://download-stock-fogu52oorq-df.a.run.app \
--H "Authorization: bearer $(gcloud auth print-identity-token)" \
--H "Content-Type: application/json" \
--d '{
-  "name": "Hello World"
-}'
+  -H "Authorization: bearer $(gcloud auth print-identity-token)" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Hello World"
+  }'
+
+#+END_SRC
 
 
 ** new
-curl -m 1810 -X POST https://asia-east2-stock-lib.cloudfunctions.net/download-stock \
+#+BEGIN_SRC bash
+  curl -m 1810 -X POST https://asia-east2-stock-lib.cloudfunctions.net/download-stock \
 -H "Authorization: bearer $(gcloud auth print-identity-token)" \
 -H "Content-Type: application/json" \
 -d '{
   "name": "Hello World"
 }'
+
+#+END_SRC
 
 
 
@@ -49,10 +58,15 @@ curl -m 1810 -X POST https://asia-east2-stock-lib.cloudfunctions.net/download-st
 https://github.com/GoogleCloudPlatform/functions-framework-go#quickstart-hello-world-on-your-local-machine
 
 ** Run
-export FUNCTION_TARGET=DownloadStock
-go runsudo apt-get install google-cloud-sdk-cloud-run-proxy cmd/main.go
+#+BEGIN_SRC bash
 
-curl localhost:8080
+ # sudo apt-get install google-cloud-sdk-cloud-run-proxy
+ export FUNCTION_TARGET=DownloadStock
+ go run cmd/main.go
+
+ curl localhost:8080
+
+#+END_SRC
 
 
 * setup
