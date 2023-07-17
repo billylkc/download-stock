@@ -71,7 +71,7 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 		return err
 	}
 	inputStage := obj.Message.Attributes.Stage
-	midIdx := len(codes) / 2 //find mid element
+	midIdx := len(codes) / 2 // find mid element
 	if inputStage == "one" {
 		halfCodes = codes[:midIdx]
 	} else if inputStage == "two" {
