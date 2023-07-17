@@ -35,17 +35,12 @@ func init() {
 // DownloadStock
 func DownloadStockEvent(ctx context.Context, e event.Event) error {
 
+	var err error
+
 	// Get date
 	loc, _ := time.LoadLocation("Asia/Hong_Kong")
 	currentTime := time.Now().In(loc).AddDate(0, 0, -1)
 	today := currentTime.Format("2006-01-02")
-
-	// Check record first
-	err := CheckRecords(today)
-	if err != nil {
-		_ = SendSlack(err.Error())
-		return err
-	}
 
 	_ = SendSlack(fmt.Sprintf("Start: %s", currentTime.Format("2006-01-02 15:04:05")))
 
@@ -85,7 +80,7 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 		return fmt.Errorf("Invalid input from pubsub. Input stage - %s.", inputStage)
 	}
 
-	_ = SendSlack(fmt.Sprintf("Stage - %s. List of stocks - %d", inputStage, len(cc)))
+	_ = SendSlack(fmt.Sprintf("Stage - %s. List of stocks - %d", inputStage, len(halfCodes)))
 
 	// Split stocks into 10 different stages
 	var records []HistoricalPrice // Final result
