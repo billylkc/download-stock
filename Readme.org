@@ -17,7 +17,7 @@
 
 * New Deploy - 2
 #+BEGIN_SRC bash
-  gcloud functions deploy download-stock-1 \
+  gcloud functions deploy download-stock-2 \
     --gen2 \
     --region=asia-east2 \
     --runtime=go120 \
