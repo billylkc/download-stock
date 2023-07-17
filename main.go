@@ -1,40 +1,39 @@
 package downloadstock
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
-	"html"
 	"io"
-	"net/http"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
+	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/sirupsen/logrus"
 )
 
-func init() {
-	functions.HTTP("DownloadStock", DownloadStock)
+type PubSubMsg struct {
+	Message struct {
+		Attributes struct {
+			Stage string `json:"stage"`
+		} `json:"attributes"`
+		Data         string    `json:"data"`
+		MessageID    string    `json:"messageId"`
+		MessageID0   string    `json:"message_id"`
+		PublishTime  time.Time `json:"publishTime"`
+		PublishTime0 time.Time `json:"publish_time"`
+	} `json:"message"`
+	Subscription string `json:"subscription"`
 }
 
-// Function for testing
-func TestFunc(w http.ResponseWriter, r *http.Request) {
-	codes, err := GetCompanyList()
-
-	if err != nil {
-		fmt.Fprint(w, html.EscapeString(err.Error()))
-	}
-	fmt.Println(len(codes))
-
-	if len(codes) > 10 {
-		codes = codes[0:10]
-	}
-	fmt.Println(PrettyPrint(codes))
-
+func init() {
+	functions.CloudEvent("DownloadStockEvent", DownloadStockEvent)
 }
 
 // DownloadStock
-func DownloadStock(w http.ResponseWriter, r *http.Request) {
+func DownloadStockEvent(ctx context.Context, e event.Event) error {
 
 	// Get date
 	loc, _ := time.LoadLocation("Asia/Hong_Kong")
@@ -45,8 +44,7 @@ func DownloadStock(w http.ResponseWriter, r *http.Request) {
 	err := CheckRecords(today)
 	if err != nil {
 		_ = SendSlack(err.Error())
-		fmt.Fprint(w, html.EscapeString(err.Error()))
-		return
+		return err
 	}
 
 	_ = SendSlack(fmt.Sprintf("Start: %s", currentTime.Format("2006-01-02 15:04:05")))
@@ -56,7 +54,7 @@ func DownloadStock(w http.ResponseWriter, r *http.Request) {
 	if (weekday == 0) || (weekday == 6) {
 		err = fmt.Errorf("Error. Weekend.")
 		_ = SendSlack(err.Error())
-		return
+		return err
 	}
 
 	// Create Quandl object
@@ -67,10 +65,27 @@ func DownloadStock(w http.ResponseWriter, r *http.Request) {
 	// Get list of companies in code
 	codes, err := GetCompanyList()
 	if err != nil {
-		fmt.Fprint(w, html.EscapeString(err.Error()))
-		return
+		return fmt.Errorf("Can not get company list. %v.\n", err)
 	}
-	_ = SendSlack(fmt.Sprintf("List of stocks - %d", len(codes)))
+
+	// Handle stages, split the codes in two parts. one or two.
+	var cc []Company
+	var obj PubSubMsg
+	err = json.Unmarshal([]byte(e.Data()), &obj)
+	if err != nil {
+		return err
+	}
+	inputStage := obj.Message.Attributes.Stage
+	midIdx := len(codes) / 2 //find mid element
+	if inputStage == "one" {
+		cc = codes[:midIdx]
+	} else if inputStage == "two" {
+		cc = codes[midIdx:]
+	} else {
+		return fmt.Errorf("Invalid input from pubsub. Input stage - %s.", inputStage)
+	}
+
+	_ = SendSlack(fmt.Sprintf("Stage - %s. List of stocks - %d", inputStage, len(cc)))
 
 	// Split stocks into 10 different stages
 	var records []HistoricalPrice // Final result
@@ -115,5 +130,5 @@ func DownloadStock(w http.ResponseWriter, r *http.Request) {
 	_ = SendSlack(fmt.Sprintf("Successfully Insert - %d records", len(records)))
 	_ = SendSlack(fmt.Sprintf("Finished - %d", len(records)))
 	_ = SendSlack(fmt.Sprintf("Finished: %s", time.Now().In(loc).Format("2006-01-02 15:04:05")))
-	fmt.Fprint(w, html.EscapeString("w/e"))
+	return nil
 }
