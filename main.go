@@ -69,7 +69,7 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 	}
 
 	// Handle stages, split the codes in two parts. one or two.
-	var cc []Company
+	var halfCodes []Company
 	var obj PubSubMsg
 	err = json.Unmarshal([]byte(e.Data()), &obj)
 	if err != nil {
@@ -78,9 +78,9 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 	inputStage := obj.Message.Attributes.Stage
 	midIdx := len(codes) / 2 //find mid element
 	if inputStage == "one" {
-		cc = codes[:midIdx]
+		halfCodes = codes[:midIdx]
 	} else if inputStage == "two" {
-		cc = codes[midIdx:]
+		halfCodes = codes[midIdx:]
 	} else {
 		return fmt.Errorf("Invalid input from pubsub. Input stage - %s.", inputStage)
 	}
@@ -92,7 +92,7 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 	var errCodes []string         // List of codes with no records
 	stage, nsplits := 0, 200
 
-	for i, code := range codes {
+	for i, code := range halfCodes {
 
 		// Print stage after every 200 stocks
 		if i%nsplits == 0 {
@@ -105,7 +105,6 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 			stage += 1
 		}
 
-		//
 		r, err := q.GetStock(code.StockCode, today)
 		if err != nil {
 			errMsg := err.Error()
