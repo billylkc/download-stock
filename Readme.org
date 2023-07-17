@@ -121,6 +121,20 @@ https://github.com/GoogleCloudPlatform/functions-framework-go#quickstart-hello-w
 
 #+END_SRC
 
+* Remove duplicate data
+
+#+BEGIN_SRC sql
+-- create temp table
+CREATE TABLE `stock-lib.stock.temp_stock` AS
+select distinct date, code, codeF, ask, bid, open, high, low, close, volume, turnover from `stock-lib.stock.stock` where date >= "2023-07-12" order by date, code
+
+-- delete original data
+delete from `stock-lib.stock.stock` where date >= "2023-07-12";
+
+-- insert dedup data
+INSERT INTO `stock-lib.stock.stock` SELECT * from `stock-lib.stock.temp_stock`;
+
+#+END_SRC
 
 * setup
 ** service account
