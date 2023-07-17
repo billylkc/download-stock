@@ -9,7 +9,7 @@
     --entry-point=DownloadStockEvent \
     --service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
     --trigger-service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
-    --trigger-topic='download-stock-1-cronjob' \
+    --trigger-topic='download-stock-1-cronjob-topic' \
     --timeout=540s \
     --memory=256MB \
     --max-instances=1
@@ -25,7 +25,7 @@
     --entry-point=DownloadStockEvent \
     --service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
     --trigger-service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
-    --trigger-topic='download-stock-2-cronjob' \
+    --trigger-topic='download-stock-2-cronjob-topic' \
     --timeout=540s \
     --memory=256MB \
     --max-instances=1
