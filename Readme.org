@@ -16,7 +16,7 @@
 #+END_SRC
 
 
-* Old Deploy
+* Old Deploy - html
 #+BEGIN_SRC bash
 gcloud functions deploy download-stock \
   --gen2 \
