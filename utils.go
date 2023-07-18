@@ -66,7 +66,7 @@ func CheckRecords(date string) error {
 	if len(values) > 0 {
 		nrecords = values[0].(int64)
 	}
-	if nrecords == 0 {
+	if nrecords != 0 {
 		return fmt.Errorf("Error. Records already exists for date %s.", date)
 	}
 
