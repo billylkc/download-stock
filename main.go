@@ -17,6 +17,7 @@ import (
 type PubSubMsg struct {
 	Message struct {
 		Attributes struct {
+			Date  string `json:"date"`
 			Stage string `json:"stage"`
 		} `json:"attributes"`
 		Data         string    `json:"data"`
