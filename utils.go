@@ -44,7 +44,7 @@ func CheckRecords(date string) error {
 		return errors.New("Failed to create bq client")
 	}
 
-	q := client.Query(fmt.Sprintf(`SELECT count(1) FROM %s WHERE date = "%s"`, "`"+"stock-lib.stock.stock"+"`", "2023-07-15"))
+	q := client.Query(fmt.Sprintf(`SELECT count(1) FROM %s WHERE date = "%s"`, "`"+"stock-lib.stock.stock"+"`", date))
 	it, err := q.Read(ctx)
 	if err != nil {
 		return fmt.Errorf("Something's wrong with the sql statement in check records. %w.", err)
