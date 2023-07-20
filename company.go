@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -118,6 +119,10 @@ func GetCompanyList() ([]Company, error) {
 			fmt.Println(msg)
 		}
 
+	}
+
+	if len(stocks) == 0 {
+		return stocks, errors.New("No records during GetCompanyList")
 	}
 
 	return stocks, nil

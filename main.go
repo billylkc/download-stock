@@ -11,6 +11,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -64,8 +65,6 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 		return fmt.Errorf("Can not get company list. %v.\n", err)
 	}
 
-	// TODO: Add checking in bq records, maybe print min max stock code as well
-
 	// Handle stages, split the codes in two parts. one or two.
 	var halfCodes []Company
 	var obj PubSubMsg
@@ -81,6 +80,15 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 		halfCodes = codes[midIdx:]
 	} else {
 		return fmt.Errorf("Invalid input from pubsub. Input stage - %s.", inputStage)
+	}
+
+	var startCode, endCode int
+	if len(halfCodes) > 0 {
+		startCode = halfCodes[0].StockCode
+		endCode = halfCodes[len(halfCodes)-1].StockCode
+		_ = SendSlack(fmt.Sprintf("Getting stocks - Stage %s - [%d, %d]", inputStage, startCode, endCode))
+	} else {
+		return errors.New("No availble codes to send to Quandl.")
 	}
 
 	_ = SendSlack(fmt.Sprintf("Stage - %s. List of stocks - %d", inputStage, len(halfCodes)))
