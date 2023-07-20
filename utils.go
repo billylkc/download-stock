@@ -44,7 +44,9 @@ func CheckRecords(date string, code int) error {
 		return errors.New("Failed to create bq client")
 	}
 
-	q := client.Query(fmt.Sprintf(`SELECT count(1) FROM %s WHERE date = "%s" AND code = %d`, "`"+"stock-lib.stock.stock"+"`", date, code))
+	sql := fmt.Sprintf(`SELECT count(1) FROM %s WHERE date = "%s" AND code = %d`, "`"+"stock-lib.stock.stock"+"`", date, code)
+	fmt.Println(sql)
+	q := client.Query(sql)
 	it, err := q.Read(ctx)
 	if err != nil {
 		return fmt.Errorf("Something's wrong with the sql statement in check records. %w.", err)
@@ -69,6 +71,7 @@ func CheckRecords(date string, code int) error {
 	if nrecords == 0 {
 		return fmt.Errorf("Error. Records already exists for date %s and code %d.", date, code)
 	}
+	fmt.Printf("nrecords: %d\n", nrecords)
 
 	return nil
 }
