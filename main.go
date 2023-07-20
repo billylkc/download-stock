@@ -64,6 +64,8 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 		return fmt.Errorf("Can not get company list. %v.\n", err)
 	}
 
+	// TODO: Add checking in bq records, maybe print min max stock code as well
+
 	// Handle stages, split the codes in two parts. one or two.
 	var halfCodes []Company
 	var obj PubSubMsg

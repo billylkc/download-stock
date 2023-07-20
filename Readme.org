@@ -10,6 +10,8 @@
     --service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
     --trigger-service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
     --trigger-topic='download-stock-1-cronjob-topic' \
+    --set-secrets='QUANDL_TOKEN=QUANDL_TOKEN:latest' \
+    --set-secrets='SLACK_WEBHOOK=SLACK_WEBHOOK:latest' \
     --timeout=540s \
     --memory=256MB \
     --max-instances=1
@@ -26,6 +28,8 @@
     --service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
     --trigger-service-account='msa-download-stock@stock-lib.iam.gserviceaccount.com' \
     --trigger-topic='download-stock-2-cronjob-topic' \
+    --set-secrets='QUANDL_TOKEN=QUANDL_TOKEN:latest' \
+    --set-secrets='SLACK_WEBHOOK=SLACK_WEBHOOK:latest' \
     --timeout=540s \
     --memory=256MB \
     --max-instances=1
