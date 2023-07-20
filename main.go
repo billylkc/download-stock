@@ -82,6 +82,7 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 		return fmt.Errorf("Invalid input from pubsub. Input stage - %s.", inputStage)
 	}
 
+	// Print start, end code for the stage
 	var startCode, endCode int
 	if len(halfCodes) > 0 {
 		startCode = halfCodes[0].StockCode
@@ -89,6 +90,12 @@ func DownloadStockEvent(ctx context.Context, e event.Event) error {
 		_ = SendSlack(fmt.Sprintf("Getting stocks - Stage %s - [%d, %d]", inputStage, startCode, endCode))
 	} else {
 		return errors.New("No availble codes to send to Quandl.")
+	}
+
+	// Remarks, the "startCode" may have no recrods in db, due to "no longer active" or delist, etc..
+	err = CheckRecords(today, startCode)
+	if err != nil {
+		return err
 	}
 
 	_ = SendSlack(fmt.Sprintf("Stage - %s. List of stocks - %d", inputStage, len(halfCodes)))

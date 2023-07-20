@@ -35,7 +35,7 @@ func InsertStocks(records []HistoricalPrice) error {
 }
 
 // CheckRecords checks the records in bq, and see if the records already exist
-func CheckRecords(date string) error {
+func CheckRecords(date string, code int) error {
 
 	ctx := context.Background()
 	client, err := bigquery.NewClient(ctx, "stock-lib")
@@ -44,7 +44,7 @@ func CheckRecords(date string) error {
 		return errors.New("Failed to create bq client")
 	}
 
-	q := client.Query(fmt.Sprintf(`SELECT count(1) FROM %s WHERE date = "%s"`, "`"+"stock-lib.stock.stock"+"`", "2023-07-15"))
+	q := client.Query(fmt.Sprintf(`SELECT count(1) FROM %s WHERE date = "%s" AND code = %d`, "`"+"stock-lib.stock.stock"+"`", date, code))
 	it, err := q.Read(ctx)
 	if err != nil {
 		return fmt.Errorf("Something's wrong with the sql statement in check records. %w.", err)
@@ -67,7 +67,7 @@ func CheckRecords(date string) error {
 		nrecords = values[0].(int64)
 	}
 	if nrecords == 0 {
-		return fmt.Errorf("Error. Records already exists for date %s.", date)
+		return fmt.Errorf("Error. Records already exists for date %s and code %d.", date, code)
 	}
 
 	return nil
